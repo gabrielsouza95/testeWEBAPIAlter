@@ -9,7 +9,7 @@ using testeAlter.Models;
 namespace testeAlter.Controllers
 {
     [ApiController]
-    [Route("/v1/categorias")]
+    [Route("v1/categorias")]
     public class ControllerCategoria : ControllerBase
     {
         [HttpGet]
