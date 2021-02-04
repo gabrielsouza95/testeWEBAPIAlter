@@ -77,12 +77,18 @@ namespace testeAlter.Controllers
             [FromServices] DataContext context,
             int id)
         {
-            var produto = await context.Produtos.GetByCategory(id);
+            var produto = await context.Produtos.Include(x => x.Categoria)
+                .AsNoTracking() ///não deixa criar um proxy dos objetos
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (produto != null)
                 return BadRequest("Categoria está associada a um produto");
 
-            var categoria = await context.Categorias.Delete();
+            var categoria = await context.Categorias.Include(x => x.Id)
+                .AsNoTracking() ///não deixa criar um proxy dos objetos
+                .FirstOrDefaultAsync(x => x.Id == id);
+            context.Categorias.Remove(categoria);
+            await context.SaveChangesAsync();
 
             return categoria;
         }
