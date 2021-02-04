@@ -51,6 +51,11 @@ namespace testeAlter.Controllers
         {
             if(ModelState.IsValid)
             {
+                var categoria = await context.Categorias.FindAsync(model.Categoria_id);
+
+                if (categoria == null)
+                    return BadRequest("Categoria não cadastrada");
+
                 context.Produtos.Add(model);
                 await context.SaveChangesAsync();
                 return model;
