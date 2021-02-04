@@ -17,6 +17,20 @@ namespace testeAlter.Controllers
         public async Task<ActionResult<List<Categoria>>> Get([FromServices] DataContext context)
         {
             var categorias = await context.Categorias.ToListAsync();
+            //categorias = new List<Categoria>()
+            //{
+            //    new Categoria()
+            //    {
+            //        Id = 1,
+            //        Name = "Categoria 1"
+            //    },
+            //    new Categoria()
+            //    {
+            //        Id = 2,
+            //        Name = "Categoria 2"
+            //    }
+            //};
+
             return categorias;
         }
         
