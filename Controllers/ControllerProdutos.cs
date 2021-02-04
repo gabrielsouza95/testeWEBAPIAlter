@@ -61,5 +61,43 @@ namespace testeAlter.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("{id:int}")]
+        public async Task<ActionResult<Produto>> Put(
+            [FromServices] DataContext context,
+            [FromBody] Produto model,
+            int id
+            )
+        {
+            if (id != model.Id)
+                return BadRequest("ID de Categoria não está correto.");
+
+            var produto = await context.Produtos.FindAsync(id);
+
+            if (produto == null)
+                return NotFound($"Produto com ID = {id} não foi encontrada.");
+
+            context.Produtos.Update(model);
+            await context.SaveChangesAsync();
+
+            return model;
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<ActionResult<Produto>> Delete(
+            [FromServices] DataContext context,
+            int id)
+        {
+            var produto = await context.Produtos.Include(x => x.Categoria)
+                .AsNoTracking() ///não deixa criar um proxy dos objetos
+                .FirstOrDefaultAsync(x => x.Categoria_id == id);
+
+            context.Produtos.Remove(produto);
+            await context.SaveChangesAsync();
+
+            return produto;
+        }
+
     }
 }

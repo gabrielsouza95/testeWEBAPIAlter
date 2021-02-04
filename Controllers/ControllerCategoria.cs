@@ -79,7 +79,7 @@ namespace testeAlter.Controllers
         {
             var produto = await context.Produtos.Include(x => x.Categoria)
                 .AsNoTracking() ///não deixa criar um proxy dos objetos
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.Categoria_id == id);
 
             if (produto != null)
                 return BadRequest("Categoria está associada a um produto");
@@ -87,6 +87,7 @@ namespace testeAlter.Controllers
             var categoria = await context.Categorias.Include(x => x.Id)
                 .AsNoTracking() ///não deixa criar um proxy dos objetos
                 .FirstOrDefaultAsync(x => x.Id == id);
+
             context.Categorias.Remove(categoria);
             await context.SaveChangesAsync();
 
