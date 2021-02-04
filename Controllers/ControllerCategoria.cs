@@ -17,19 +17,6 @@ namespace testeAlter.Controllers
         public async Task<ActionResult<List<Categoria>>> Get([FromServices] DataContext context)
         {
             var categorias = await context.Categorias.ToListAsync();
-            //categorias = new List<Categoria>()
-            //{
-            //    new Categoria()
-            //    {
-            //        Id = 1,
-            //        Name = "Categoria 1"
-            //    },
-            //    new Categoria()
-            //    {
-            //        Id = 2,
-            //        Name = "Categoria 2"
-            //    }
-            //};
 
             return categorias;
         }
@@ -40,7 +27,7 @@ namespace testeAlter.Controllers
             [FromServices] DataContext context,
             [FromBody] Categoria model )
         {
-            if(ModelState.IsValid)
+            if(ModelState.IsValid) // Adiciona as validações do modelo.
             {
                 context.Categorias.Add(model);
                 await context.SaveChangesAsync();
