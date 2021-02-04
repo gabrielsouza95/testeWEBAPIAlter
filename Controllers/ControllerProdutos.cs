@@ -70,17 +70,22 @@ namespace testeAlter.Controllers
             )
         {
             if (id != model.Id)
-                return BadRequest("ID de Categoria não está correto.");
+                return BadRequest("ID de Produto não está correto.");
 
-            var produto = await context.Produtos.FindAsync(id);
+            if (ModelState.IsValid)
+            {
+                //var produto = await context.Produtos.FindAsync(id);
 
-            if (produto == null)
-                return NotFound($"Produto com ID = {id} não foi encontrada.");
+                //if (produto == null)
+                //    return NotFound($"Produto com ID = {id} não foi encontrada.");
 
-            context.Produtos.Update(model);
-            await context.SaveChangesAsync();
+                context.Produtos.Update(model);
+                await context.SaveChangesAsync();
 
-            return model;
+                return model;
+            }
+            else
+                return BadRequest(ModelState);
         }
 
         [HttpDelete]

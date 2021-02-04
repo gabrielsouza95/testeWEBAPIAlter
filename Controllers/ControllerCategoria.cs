@@ -25,9 +25,8 @@ namespace testeAlter.Controllers
         [Route("{id:int}")] ///Recebe um int com restrição na rota, que caso seja colocado outro tipo, não é aceito.
         public async Task<ActionResult<Categoria>> GetById([FromServices] DataContext context, int id) ///esse id precisa ser exatamente igual do que foi declarado na rota.
         {
-            var categoria = await context.Categorias.Include(x => x.Id)
-                .AsNoTracking() ///não deixa criar um proxy dos objetos
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var categoria = await context.Categorias.FindAsync(id);
+                //.FirstOrDefaultAsync(x => x.Id == id);
             return categoria;
         }
 
@@ -60,15 +59,20 @@ namespace testeAlter.Controllers
             if (id != model.Id)
                 return BadRequest("ID de Categoria não está correto.");
 
-            var categoria = await context.Categorias.FindAsync(id);
+            if (ModelState.IsValid)
+            {
+                //var categoria = await context.Categorias.FindAsync(id);
 
-            if (categoria == null)
-                return NotFound($"Categoria com ID = {id} não foi encontrada.");
+                //if (categoria == null)
+                //    return NotFound($"Categoria com ID = {id} não foi encontrada.");
 
-            context.Categorias.Update(model);
-            await context.SaveChangesAsync();
+                context.Categorias.Update(model);
+                await context.SaveChangesAsync();
 
-            return model;
+                return model;
+            }
+            else
+                return BadRequest(ModelState);
         }
 
         [HttpDelete]
@@ -84,9 +88,7 @@ namespace testeAlter.Controllers
             if (produto != null)
                 return BadRequest("Categoria está associada a um produto");
 
-            var categoria = await context.Categorias.Include(x => x.Id)
-                .AsNoTracking() ///não deixa criar um proxy dos objetos
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var categoria = await context.Categorias.FindAsync(id);
 
             context.Categorias.Remove(categoria);
             await context.SaveChangesAsync();
