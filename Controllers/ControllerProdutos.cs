@@ -32,7 +32,7 @@ namespace testeAlter.Controllers
         }
 
         [HttpGet]
-        [Route("{categorias/id:int}")] ///.
+        [Route("categorias/{id:int}")] ///.
         public async Task<ActionResult<List<Produto>>> GetByCategory([FromServices] DataContext context, int id) ///esse id precisa ser exatamente igual do que foi declarado na rota.
         {
             var produtos = await context.Produtos
