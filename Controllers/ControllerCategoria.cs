@@ -20,7 +20,17 @@ namespace testeAlter.Controllers
 
             return categorias;
         }
-        
+
+        [HttpGet]
+        [Route("{id:int}")] ///Recebe um int com restrição na rota, que caso seja colocado outro tipo, não é aceito.
+        public async Task<ActionResult<Categoria>> GetById([FromServices] DataContext context, int id) ///esse id precisa ser exatamente igual do que foi declarado na rota.
+        {
+            var categoria = await context.Categorias.Include(x => x.Id)
+                .AsNoTracking() ///não deixa criar um proxy dos objetos
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return categoria;
+        }
+
         [HttpPost]
         [Route("")]
         public async Task<ActionResult<Categoria>> Post (
@@ -37,6 +47,44 @@ namespace testeAlter.Controllers
             {
                 return BadRequest(ModelState);
             }
+        }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        public async Task<ActionResult<Categoria>> Put (
+            [FromServices] DataContext context,
+            [FromBody] Categoria model,
+            int id
+            )
+        {
+            if (id != model.Id)
+                return BadRequest("ID de Categoria não está correto.");
+
+            var categoria = await context.Categorias.FindAsync(id);
+
+            if (categoria == null)
+                return NotFound($"Categoria com ID = {id} não foi encontrada.");
+
+            context.Categorias.Update(model);
+            await context.SaveChangesAsync();
+
+            return model;
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<ActionResult<Categoria>> Delete (
+            [FromServices] DataContext context,
+            int id)
+        {
+            var produto = await context.Produtos.GetByCategory(id);
+
+            if (produto != null)
+                return BadRequest("Categoria está associada a um produto");
+
+            var categoria = await context.Categorias.Delete();
+
+            return categoria;
         }
     }
 }
